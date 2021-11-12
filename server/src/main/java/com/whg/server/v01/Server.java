@@ -18,6 +18,7 @@ public class Server {
         System.out.println("server start on port="+port);
         while(running){
             Socket client = server.accept();
+            System.out.println("accept client:"+client);
             process(client);
             client.close();
         }
