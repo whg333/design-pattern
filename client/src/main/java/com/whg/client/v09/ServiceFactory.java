@@ -1,4 +1,4 @@
-package com.whg.client.v07;
+package com.whg.client.v09;
 
 import com.whg.api.User;
 import com.whg.api.UserService;
@@ -22,11 +22,10 @@ public class ServiceFactory {
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             beforeInvoke(proxy, method, args);
 
-                            long id = (long) args[0];
                             Object result = null;
                             Exception exception = null;
                             try {
-                                result = findUser(id);
+                                result = doInvoke(method, args);
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 exception = e;
@@ -43,26 +42,27 @@ public class ServiceFactory {
         }
     }
 
-    private static User findUser(long id) throws Exception{
+    private static Object doInvoke(Method method, Object[] args) throws Exception{
         Socket client = new Socket("localhost", 9017);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dOut = new DataOutputStream(baos);
-        dOut.writeLong(id);
+        ObjectOutputStream oOut = new ObjectOutputStream(baos);
+
+        String methodName = method.getName();
+        Class<?>[] paramTypes = method.getParameterTypes();
+        oOut.writeUTF(methodName);
+        oOut.writeObject(paramTypes);
+        oOut.writeObject(args);
 
         OutputStream out = client.getOutputStream();
         out.write(baos.toByteArray());
         out.flush();
 
         InputStream in = client.getInputStream();
-        DataInputStream dIn = new DataInputStream(in);
-        long uid = dIn.readLong();
-        String name = dIn.readUTF();
-        int age = dIn.readInt();
-
-        User user = new User(uid, name, age);
+        ObjectInputStream oIn = new ObjectInputStream(in);
+        Object result = oIn.readObject();
         client.close();
 
-        return user;
+        return result;
     }
 
     private static void beforeInvoke(Object proxy, Method method, Object[] args){

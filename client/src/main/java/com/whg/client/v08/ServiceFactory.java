@@ -27,6 +27,7 @@ public class ServiceFactory {
                             try {
                                 result = doInvoke(method, args);
                             } catch (Exception e) {
+                                e.printStackTrace();
                                 exception = e;
                             }
 
@@ -66,6 +67,7 @@ public class ServiceFactory {
     }
 
     private static void beforeInvoke(Object proxy, Method method, Object[] args){
+        System.out.println();
         System.out.println("执行前");
         System.out.println("执行类="+proxy.getClass().getName());
         System.out.println("执行接口="+ Arrays.toString(proxy.getClass().getInterfaces()));
@@ -75,6 +77,7 @@ public class ServiceFactory {
     }
 
     private static void afterInvoke(Object result, Exception exception){
+        System.out.println();
         System.out.println("执行后");
         System.out.println("执行结果="+result);
         System.out.println("执行异常="+exception);
