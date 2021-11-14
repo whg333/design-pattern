@@ -15,9 +15,9 @@ public class ServiceFactory {
             Object proxy = constructor.newInstance(new InvocationHandler() {
                 @Override
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                    long id = (long) args[0];
                     UserService userService = new UserServiceImpl();
-                    Object result = method.invoke(userService, args);
-                    return result;
+                    return userService.findUser(id);
                 }
             });
             return (UserService) proxy;

@@ -1,4 +1,4 @@
-package com.whg.client.v07;
+package com.whg.client.v08;
 
 import com.whg.api.User;
 import com.whg.api.UserService;
@@ -22,11 +22,10 @@ public class ServiceFactory {
                         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                             beforeInvoke(proxy, method, args);
 
-                            long id = (long) args[0];
                             Object result = null;
                             Exception exception = null;
                             try {
-                                result = findUser(id);
+                                result = doInvoke(method, args);
                             } catch (Exception e) {
                                 exception = e;
                             }
@@ -42,7 +41,9 @@ public class ServiceFactory {
         }
     }
 
-    private static User findUser(long id) throws Exception{
+    private static Object doInvoke(Method method, Object[] args) throws Exception{
+        long id = (long) args[0];
+
         Socket client = new Socket("localhost", 9017);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dOut = new DataOutputStream(baos);
