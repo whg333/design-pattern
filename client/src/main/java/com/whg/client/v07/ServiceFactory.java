@@ -10,10 +10,10 @@ public class ServiceFactory {
 
     public static UserService getUserService(){
         UserService userService = new UserServiceImpl();
-        return getService(userService);
+        return (UserService) getService(userService);
     }
 
-    private static UserService getService(Object target){
+    private static Object getService(Object target){
         try {
             Object proxy = Proxy.newProxyInstance(
                     target.getClass().getClassLoader(),
@@ -35,7 +35,7 @@ public class ServiceFactory {
                             return result;
                         }
                     });
-            return (UserService) proxy;
+            return proxy;
         } catch (Exception  e) {
             e.printStackTrace();
             return null;
