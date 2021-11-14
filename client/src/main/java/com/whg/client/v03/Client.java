@@ -1,4 +1,4 @@
-package com.whg.client.v02;
+package com.whg.client.v03;
 
 import com.whg.api.User;
 import com.whg.api.UserService;
@@ -6,9 +6,9 @@ import com.whg.api.UserService;
 public class Client {
 
     public static void main(String[] args) {
-        UserService userService = new UserServiceImpl();
+        UserService userService = ServiceFactory.getUserService();
         User user = userService.findUser(12345);
-        System.out.println("v02 client receive from server: user="+user);
+        System.out.println("v03 client receive from server: user="+user);
     }
 
 }
