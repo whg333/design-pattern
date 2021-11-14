@@ -6,7 +6,7 @@ import com.whg.api.UserService;
 import java.io.*;
 import java.net.Socket;
 
-public class UserServiceProxy implements UserService {
+public class UserServiceImpl implements UserService {
 
     @Override
     public User findUser(long id) {

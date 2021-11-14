@@ -1,26 +1,24 @@
-package com.whg.client.v06;
+package com.whg.client.v07;
 
 import com.whg.api.UserService;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-public class ProxyFactory {
+public class ServiceFactory {
 
-    public static UserService getProxy(){
+    public static UserService getProxy(Object target){
         try {
             InvocationHandler invoker = new InvocationHandler() {
                 @Override
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                    UserService userService = new UserServiceProxy();
-                    Object result = method.invoke(userService, args);
+                    Object result = method.invoke(target, args);
                     return result;
                 }
             };
-            Object proxy = Proxy.newProxyInstance(UserService.class.getClassLoader(),
-                    new Class[]{ UserService.class }, invoker);
+            Object proxy = Proxy.newProxyInstance(target.getClass().getClassLoader(),
+                    target.getClass().getInterfaces(), invoker);
             return (UserService)proxy;
         } catch (Exception  e) {
             e.printStackTrace();

@@ -6,7 +6,7 @@ import com.whg.api.UserService;
 public class Client {
 
     public static void main(String[] args) {
-        UserService userService = ProxyFactory.getProxy(new UserServiceProxy());
+        UserService userService = ServiceFactory.getProxy(new UserServiceImpl());
         User user = userService.findUser(12345);
         System.out.println("v07 client receive from server: user="+user);
     }
