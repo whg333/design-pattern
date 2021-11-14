@@ -1,4 +1,4 @@
-package com.whg.client.v08;
+package com.whg.client.v06;
 
 import com.whg.api.User;
 import com.whg.api.UserService;
