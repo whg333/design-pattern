@@ -8,9 +8,11 @@ public class ServiceFactory {
 
     public static UserService getUserService(){
         try {
-            Class<?> proxyClass = Proxy.getProxyClass(UserService.class.getClassLoader(), UserService.class);
+            Class<?> proxyClass = Proxy.getProxyClass(
+                    UserService.class.getClassLoader(),
+                    UserService.class);
             Constructor<?> constructor = proxyClass.getConstructor(InvocationHandler.class);
-            UserService proxyInst = (UserService) constructor.newInstance(new InvocationHandler() {
+            Object proxy = constructor.newInstance(new InvocationHandler() {
                 @Override
                 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                     UserService userService = new UserServiceImpl();
@@ -18,7 +20,7 @@ public class ServiceFactory {
                     return result;
                 }
             });
-            return proxyInst;
+            return (UserService) proxy;
         } catch (Exception  e) {
             e.printStackTrace();
             return null;

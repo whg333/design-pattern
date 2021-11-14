@@ -1,33 +1,40 @@
 package com.whg.client.v07;
 
 import com.whg.api.UserService;
+import com.whg.client.v04.UserServiceImpl;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
 
 public class ServiceFactory {
 
-    public static UserService getService(Object target){
+    public static UserService getUserService(){
+        UserService userService = new UserServiceImpl();
+        return getService(userService);
+    }
+
+    private static UserService getService(Object target){
         try {
-            InvocationHandler invoker = new InvocationHandler() {
-                @Override
-                public Object invoke(Object proxy, Method method, Object[] args) {
-                    beforeInvoke(proxy, method, args);
+            Object proxy = Proxy.newProxyInstance(
+                    target.getClass().getClassLoader(),
+                    target.getClass().getInterfaces(),
+                    new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) {
+                            beforeInvoke(proxy, method, args);
 
-                    Object result = null;
-                    Exception exception = null;
-                    try {
-                        result = method.invoke(target, args);
-                    } catch (Exception e) {
-                        exception = e;
-                    }
+                            Object result = null;
+                            Exception exception = null;
+                            try {
+                                result = method.invoke(target, args);
+                            } catch (Exception e) {
+                                exception = e;
+                            }
 
-                    afterInvoke(result, exception);
-                    return result;
-                }
-            };
-            Object proxy = Proxy.newProxyInstance(target.getClass().getClassLoader(),
-                    target.getClass().getInterfaces(), invoker);
+                            afterInvoke(result, exception);
+                            return result;
+                        }
+                    });
             return (UserService) proxy;
         } catch (Exception  e) {
             e.printStackTrace();
