@@ -26,7 +26,7 @@ public class Client {
         User user = new User(uid, name, age);
         client.close();
 
-        System.out.println("v01 client receive from server: user="+user);
+        System.out.println("v01 client find user success: user="+user);
     }
 
 }

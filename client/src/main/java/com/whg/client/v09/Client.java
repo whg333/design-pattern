@@ -8,7 +8,7 @@ public class Client {
     public static void main(String[] args) {
         UserService userService = ServiceFactory.getUserService();
         User user = userService.findUser(12345);
-        System.out.println("v09 client receive from server: user="+user);
+        System.out.println("v09 client find user success: user="+user);
 
         user.setAge(35);
         if(userService.saveUser(user)){

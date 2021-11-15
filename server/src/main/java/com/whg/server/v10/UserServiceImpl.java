@@ -1,4 +1,4 @@
-package com.whg.server.v09;
+package com.whg.server.v10;
 
 import com.whg.api.User;
 import com.whg.api.UserService;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveUser(User user) {
-        System.out.println("v09 保存用戶user="+user+"成功！");
+        System.out.println("v10 保存用戶user="+user+"成功！");
         return true;
     }
 
