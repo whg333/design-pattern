@@ -13,34 +13,29 @@ import java.util.Arrays;
 public class ServiceFactory {
 
     public static UserService getUserService(){
-        try {
-            Object proxy = Proxy.newProxyInstance(
-                    UserService.class.getClassLoader(),
-                    new Class[]{UserService.class},
-                    new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            beforeInvoke(proxy, method, args);
+        Object proxy = Proxy.newProxyInstance(
+                UserService.class.getClassLoader(),
+                new Class[]{UserService.class},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) {
+                        beforeInvoke(proxy, method, args);
 
-                            long id = (long) args[0];
-                            Object result = null;
-                            Exception exception = null;
-                            try {
-                                result = findUser(id);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                exception = e;
-                            }
-
-                            afterInvoke(result, exception);
-                            return result;
+                        long id = (long) args[0];
+                        Object result = null;
+                        Exception exception = null;
+                        try {
+                            result = findUser(id);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            exception = e;
                         }
-                    });
-            return (UserService) proxy;
-        } catch (Exception  e) {
-            e.printStackTrace();
-            return null;
-        }
+
+                        afterInvoke(result, exception);
+                        return result;
+                    }
+                });
+        return (UserService) proxy;
     }
 
     private static User findUser(long id) throws Exception{

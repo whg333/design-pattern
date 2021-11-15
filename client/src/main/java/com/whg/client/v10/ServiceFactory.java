@@ -12,38 +12,33 @@ import java.util.Arrays;
 public class ServiceFactory {
 
     public static <T> T getService(Class<T> interfaceClass){
-        try {
-            Object proxy = Proxy.newProxyInstance(
-                    interfaceClass.getClassLoader(),
-                    new Class[]{interfaceClass},
-                    new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            // 过滤掉IDEA在debug的时候出现的代理自动调用toString方法
-                            if(method.getName().contains("toString")){
-                                return interfaceClass.getName();
-                            }
-
-                            beforeInvoke(proxy, method, args);
-
-                            Object result = null;
-                            Exception exception = null;
-                            try {
-                                result = doInvoke(interfaceClass, method, args);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                exception = e;
-                            }
-
-                            afterInvoke(result, exception);
-                            return result;
+        Object proxy = Proxy.newProxyInstance(
+                interfaceClass.getClassLoader(),
+                new Class[]{interfaceClass},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) {
+                        // 过滤掉IDEA在debug的时候出现的代理自动调用toString方法
+                        if(method.getName().contains("toString")){
+                            return interfaceClass.getName();
                         }
-                    });
-            return (T) proxy;
-        } catch (Exception  e) {
-            e.printStackTrace();
-            return null;
-        }
+
+                        beforeInvoke(proxy, method, args);
+
+                        Object result = null;
+                        Exception exception = null;
+                        try {
+                            result = doInvoke(interfaceClass, method, args);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            exception = e;
+                        }
+
+                        afterInvoke(result, exception);
+                        return result;
+                    }
+                });
+        return (T) proxy;
     }
 
     private static Object doInvoke(Class<?> interfaceClass, Method method, Object[] args) throws Exception{

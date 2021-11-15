@@ -13,22 +13,17 @@ import java.net.Socket;
 public class ServiceFactory {
 
     public static UserService getUserService(){
-        try {
-            Object proxy = Proxy.newProxyInstance(
-                    UserService.class.getClassLoader(),
-                    new Class[]{UserService.class},
-                    new InvocationHandler() {
-                        @Override
-                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                            long id = (long) args[0];
-                            return findUser(id);
-                        }
-                    });
-            return (UserService) proxy;
-        } catch (Exception  e) {
-            e.printStackTrace();
-            return null;
-        }
+        Object proxy = Proxy.newProxyInstance(
+                UserService.class.getClassLoader(),
+                new Class[]{UserService.class},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) {
+                        long id = (long) args[0];
+                        return findUser(id);
+                    }
+                });
+        return (UserService) proxy;
     }
 
     private static User findUser(long id) {
