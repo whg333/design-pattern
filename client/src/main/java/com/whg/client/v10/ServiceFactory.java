@@ -43,8 +43,8 @@ public class ServiceFactory {
 
     private static Object doInvoke(Class<?> interfaceClass, Method method, Object[] args) throws Exception{
         Socket client = new Socket("localhost", 9017);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oOut = new ObjectOutputStream(baos);
+        OutputStream out = client.getOutputStream();
+        ObjectOutputStream oOut = new ObjectOutputStream(out);
 
         String methodName = method.getName();
         Class<?>[] paramTypes = method.getParameterTypes();
@@ -52,10 +52,7 @@ public class ServiceFactory {
         oOut.writeUTF(methodName);
         oOut.writeObject(paramTypes);
         oOut.writeObject(args);
-
-        OutputStream out = client.getOutputStream();
-        out.write(baos.toByteArray());
-        out.flush();
+        oOut.flush();
 
         InputStream in = client.getInputStream();
         ObjectInputStream oIn = new ObjectInputStream(in);

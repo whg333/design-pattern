@@ -47,7 +47,7 @@ public class Server {
         String methodName = oIn.readUTF();
         Class<?>[] paramTypes = (Class<?>[]) oIn.readObject();
         Object[] args = (Object[]) oIn.readObject();
-        Method method = serviceClass.getDeclaredMethod(methodName, paramTypes);
+        Method method = serviceClass.getMethod(methodName, paramTypes);
         Object result = method.invoke(serviceMap.get(serviceClass), args);
 
         oOut.writeObject(result);
