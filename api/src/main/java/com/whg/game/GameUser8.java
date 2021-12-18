@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameUser8 {
 
-    private IntObj hp;
+    private int hp;
     private int exp;
 
     private final long id;
@@ -17,7 +17,7 @@ public class GameUser8 {
 
     public GameUser8(long id, int hp, ExecutorService[] userExecutor,
                      CountDownLatch latch, boolean bindUserQueue) {
-        this.hp = new IntObj(hp);
+        this.hp = hp;
 
         this.id = id;
         this.userExecutor = userExecutor;
@@ -74,12 +74,11 @@ public class GameUser8 {
             return;
         }
 
-        int hpVal = hp.getValue();
         if(needMockTime()){
             mockTime();
         }
-        hpVal = hpVal - val;
-        hp.setValue(hpVal);
+
+        hp -= val;
     }
 
     public void incrHp(int val){
@@ -87,12 +86,11 @@ public class GameUser8 {
             return;
         }
 
-        int hpVal = hp.getValue();
         if(needMockTime()){
             mockTime();
         }
-        hpVal = hpVal + val;
-        hp.setValue(hpVal);
+
+        hp += val;
     }
 
     private boolean needMockTime(){
@@ -109,7 +107,7 @@ public class GameUser8 {
     }
 
     public int getHp() {
-        return hp.getValue();
+        return hp;
     }
 
     public int getExp() {

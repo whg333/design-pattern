@@ -298,8 +298,10 @@ public class GameUserTest {
         }
     }
 
+    //两人互砍，但有一人能便砍边加血
+    //不绑定user使用队列会有问题，因为导致了多个线程操作同一个变量，当然并发度不高的话概率就复现不出来
     private static void test8(int i) throws Exception {
-        boolean bindUserQueue = true;
+        boolean bindUserQueue = false;
         //latch的作用就是在动作都执行完毕后，打开阀门验证结果，而不用去写等待多久然后才验证结果
         CountDownLatch latch = new CountDownLatch(bindUserQueue ? 8 : 4);
         ExecutorService executor = Executors.newSingleThreadExecutor();
