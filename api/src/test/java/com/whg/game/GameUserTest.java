@@ -1,8 +1,12 @@
 package com.whg.game;
 
+import cn.hutool.core.date.StopWatch;
+import cn.hutool.core.lang.Console;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class GameUserTest {
 
@@ -13,7 +17,9 @@ public class GameUserTest {
             // test3(i);
             // test4(i);
             // test5(i);
-            test6(i);
+            // test6(i);
+            // test7(i);
+            test8(i);
         }
     }
 
@@ -165,8 +171,9 @@ public class GameUserTest {
         }
     }
 
-    //使用队列来保证执行顺序
+    //使用单例线程池的队列来保证执行顺序
     private static void test6(int i) throws Exception {
+        //latch的作用就是在动作都执行完毕后，打开阀门验证结果，而不用去写等待多久然后才验证结果
         CountDownLatch latch = new CountDownLatch(3);
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -196,6 +203,7 @@ public class GameUserTest {
         t2.start();
         t3.start();
 
+        //因为使用了线程池异步执行，所以join没用了，会立即执行完毕，立即验证就会出错，应该等待latch阀门执行完毕打开
         // t1.join();
         // t2.join();
         // t3.join();
@@ -212,6 +220,154 @@ public class GameUserTest {
 
         int u2Hp = u2.getHp();
         if(u2Hp != 98){
+            throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u2血量[hp="+u2Hp+"]");
+        }else{
+            System.out.println("第"+i+"次u1和u2互相攻击成功，u2血量[hp="+u2Hp+"]");
+        }
+    }
+
+    //使用单例线程池的队列来保证执行顺序——会导致阻塞的问题
+    private static void test7(int i) throws Exception {
+        //latch的作用就是在动作都执行完毕后，打开阀门验证结果，而不用去写等待多久然后才验证结果
+        CountDownLatch latch = new CountDownLatch(3);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ExecutorService[] userExecutor = new ExecutorService[2];
+        for(int idx=0;idx<userExecutor.length;idx++){
+            userExecutor[idx] = Executors.newSingleThreadExecutor();
+        }
+
+        GameUser7 u1 = new GameUser7(1, 50, userExecutor);
+        GameUser7 u2 = new GameUser7(2, 100, userExecutor);
+
+        StopWatch stopWatch = new StopWatch("test7");
+        stopWatch.start();
+
+        Thread t1 = new Thread(() -> {
+            executor.execute(() -> {
+                u1.exec(() -> {
+                    u1.attack(u2, 1);
+                    u1.mockSecondTime(3);
+                    latch.countDown();
+                });
+            });
+        });
+        Thread t2 = new Thread(() -> {
+            executor.execute(() -> {
+                u1.exec(() -> {
+                    u1.attack(u2, 1);
+                    u1.mockSecondTime(2);
+                    latch.countDown();
+                });
+            });
+        });
+        Thread t3 = new Thread(() -> {
+            executor.execute(() -> {
+                u2.exec(() -> {
+                    u2.attack(u1, 1);
+                    u2.mockSecondTime(3);
+                    latch.countDown();
+                });
+            });
+        });
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        latch.await();
+        stopWatch.stop();
+        Console.log(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+
+        executor.shutdown();
+        for (ExecutorService executorService : userExecutor) {
+            executorService.shutdown();
+        }
+
+        int u1Exp = u1.getExp();
+        if(u1Exp != 2){
+            throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u1经验[exp="+u1Exp+"]");
+        }else{
+            System.out.println("第"+i+"次u1和u2互相攻击成功，u1经验[exp="+u1Exp+"]");
+        }
+
+        int u2Hp = u2.getHp();
+        if(u2Hp != 98){
+            throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u2血量[hp="+u2Hp+"]");
+        }else{
+            System.out.println("第"+i+"次u1和u2互相攻击成功，u2血量[hp="+u2Hp+"]");
+        }
+    }
+
+    private static void test8(int i) throws Exception {
+        boolean bindUserQueue = true;
+        //latch的作用就是在动作都执行完毕后，打开阀门验证结果，而不用去写等待多久然后才验证结果
+        CountDownLatch latch = new CountDownLatch(bindUserQueue ? 8 : 4);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        ExecutorService[] userExecutor = new ExecutorService[2];
+        for(int idx=0;idx<userExecutor.length;idx++){
+            userExecutor[idx] = Executors.newSingleThreadExecutor();
+        }
+
+        GameUser8 u1 = new GameUser8(1, 50, userExecutor, latch, bindUserQueue);
+        GameUser8 u2 = new GameUser8(2, 100, userExecutor, latch, bindUserQueue);
+
+        // StopWatch stopWatch = new StopWatch("test7");
+        // stopWatch.start();
+
+        Thread t1 = new Thread(() -> {
+            executor.execute(() -> {
+                u1.exec(() -> {
+                    u1.attack(u2, 1);
+                });
+            });
+        });
+        Thread t2 = new Thread(() -> {
+            executor.execute(() -> {
+                u1.exec(() -> {
+                    u1.attack(u2, 1);
+                });
+            });
+        });
+        Thread t3 = new Thread(() -> {
+            executor.execute(() -> {
+                u2.exec(() -> {
+                    u2.attack(u1, 1);
+                    u2.incrHp(1);
+                });
+            });
+        });
+        Thread t4 = new Thread(() -> {
+            executor.execute(() -> {
+                u2.exec(() -> {
+                    u2.attack(u1, 1);
+                    u2.incrHp(1);
+                });
+            });
+        });
+
+        t1.start();
+        t2.start();
+        t3.start();
+        t4.start();
+
+        latch.await();
+        // stopWatch.stop();
+        // Console.log(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+
+        executor.shutdown();
+        for (ExecutorService executorService : userExecutor) {
+            executorService.shutdown();
+        }
+
+        int u1Exp = u1.getExp();
+        if(u1Exp != 2){
+            throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u1经验[exp="+u1Exp+"]");
+        }else{
+            System.out.println("第"+i+"次u1和u2互相攻击成功，u1经验[exp="+u1Exp+"]");
+        }
+
+        int u2Hp = u2.getHp();
+        if(u2Hp != 100){
             throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u2血量[hp="+u2Hp+"]");
         }else{
             System.out.println("第"+i+"次u1和u2互相攻击成功，u2血量[hp="+u2Hp+"]");
