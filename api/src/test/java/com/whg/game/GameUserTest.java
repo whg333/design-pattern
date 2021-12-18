@@ -7,7 +7,8 @@ public class GameUserTest {
             // test1(i);
             // test2(i);
             // test3(i);
-            test4(i);
+            // test4(i);
+            test5(i);
         }
     }
 
@@ -106,6 +107,55 @@ public class GameUserTest {
             throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，剩余血量[hp="+hp+"]");
         }else{
             System.out.println("第"+i+"次u1和u2互相攻击成功，剩余血量[hp="+hp+"]");
+        }
+    }
+
+    private static void test5(int i) throws Exception {
+        GameUser5 u1 = new GameUser5(50);
+        GameUser5 u2 = new GameUser5(100);
+
+        Thread t1 = new Thread(() -> {
+            // u1.lock();
+            // u2.lock();
+            u1.attack(u2, 1);
+            // u2.unlock();
+            // u1.unlock();
+        });
+        Thread t2 = new Thread(() -> {
+            // u1.lock();
+            // u2.lock();
+            u1.attack(u2, 1);
+            // u2.unlock();
+            // u1.unlock();
+        });
+        Thread t3 = new Thread(() -> {
+            // u1.lock();
+            // u2.lock();
+            u2.attack(u1, 1);
+            // u2.unlock();
+            // u1.unlock();
+        });
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        t1.join();
+        t2.join();
+        t3.join();
+
+        int u1Exp = u1.getExp();
+        if(u1Exp != 2){
+            throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u1经验[exp="+u1Exp+"]");
+        }else{
+            System.out.println("第"+i+"次u1和u2互相攻击成功，u1经验[exp="+u1Exp+"]");
+        }
+
+        int u2Hp = u2.getHp();
+        if(u2Hp != 98){
+            throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u2血量[hp="+u2Hp+"]");
+        }else{
+            System.out.println("第"+i+"次u1和u2互相攻击成功，u2血量[hp="+u2Hp+"]");
         }
     }
 
