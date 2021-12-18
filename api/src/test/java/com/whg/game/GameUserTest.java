@@ -19,7 +19,8 @@ public class GameUserTest {
             // test5(i);
             // test6(i);
             // test7(i);
-            test8(i);
+            // test8(i);
+            test9(i);
         }
     }
 
@@ -168,6 +169,51 @@ public class GameUserTest {
             throw new RuntimeException("第"+i+"次u1和u2互相攻击失败，u2血量[hp="+u2Hp+"]");
         }else{
             System.out.println("第"+i+"次u1和u2互相攻击成功，u2血量[hp="+u2Hp+"]");
+        }
+    }
+
+    private static void test9(int i) throws Exception {
+        GameUser9 u1 = new GameUser9(50, 99, 1);
+        GameUser9 u2 = new GameUser9(100, 99, 1);
+
+        System.out.println("执行前u1="+u1);
+        System.out.println("执行前u2="+u2);
+
+        Thread t1 = new Thread(() -> {
+            u1.attack(u2, 1);
+        });
+        Thread t2 = new Thread(() -> {
+            u1.attack(u2, 1);
+        });
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+
+        System.out.println("执行后u1="+u1);
+        System.out.println("执行后u2="+u2);
+
+        int u1Exp = u1.getExp();
+        if(u1Exp != 1){
+            throw new RuntimeException("第"+i+"次u1攻击u2失败，u1经验[exp="+u1Exp+"]");
+        }else{
+            System.out.println("第"+i+"次u1攻击u2成功，u1经验[exp="+u1Exp+"]");
+        }
+
+        int u1Lv = u1.getLv();
+        if(u1Lv != 2){
+            throw new RuntimeException("第"+i+"次u1攻击u2失败，u1等级[lv="+u1Lv+"]");
+        }else{
+            System.out.println("第"+i+"次u1攻击u2成功，u1等级[lv="+u1Lv+"]");
+        }
+
+        int u2Hp = u2.getHp();
+        if(u2Hp != 98){
+            throw new RuntimeException("第"+i+"次u1攻击u2失败，u2血量[hp="+u2Hp+"]");
+        }else{
+            System.out.println("第"+i+"次u1攻击u2成功，u2血量[hp="+u2Hp+"]");
         }
     }
 
