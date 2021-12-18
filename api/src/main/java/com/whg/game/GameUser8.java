@@ -93,6 +93,7 @@ public class GameUser8 {
         hp += val;
     }
 
+    //测试死锁的时候打开——减慢执行增加锁的占有时间，测试并发修改的时候关闭——加速并发执行
     private boolean needMockTime(){
         // return true;
         return false;

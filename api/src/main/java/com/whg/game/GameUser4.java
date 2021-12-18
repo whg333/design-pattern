@@ -27,8 +27,11 @@ public class GameUser4 {
         }
 
         lock();
+
         exp++;
+
         other.decrHp(hp);
+
         unlock();
     }
 
@@ -38,7 +41,9 @@ public class GameUser4 {
         }
 
         lock();
+
         hp -= val;
+
         unlock();
     }
 
