@@ -12,6 +12,7 @@ public class GameUser2 {
         if(val <= 0){
             return;
         }
+
         hp -= val;
     }
 

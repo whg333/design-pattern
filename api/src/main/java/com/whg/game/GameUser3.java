@@ -3,6 +3,7 @@ package com.whg.game;
 public class GameUser3 {
 
     private int hp;
+    private int exp;
 
     public GameUser3(int hp) {
         this.hp = hp;
@@ -12,6 +13,8 @@ public class GameUser3 {
         if(other == null){
             return;
         }
+
+        exp++;
         other.decrHp(hp);
     }
 
@@ -19,11 +22,16 @@ public class GameUser3 {
         if(val <= 0){
             return;
         }
+
         hp -= val;
     }
 
     public synchronized int getHp() {
         return hp;
+    }
+
+    public synchronized int getExp() {
+        return exp;
     }
 
 }
