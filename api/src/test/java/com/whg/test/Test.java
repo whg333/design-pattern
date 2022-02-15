@@ -47,13 +47,15 @@ public class Test {
         service.scheduleWithFixedDelay(task, 2, 2, TimeUnit.SECONDS);
     }
 
-    public static final char[] value1 = new char[]{'a', 'b', 'c',};
-    public final char[] value2 = new char[]{'d', 'e', 'f'};
+    private static final char[] value1 = new char[]{'a', 'b', 'c',};
+    private final char[] value2 = new char[]{'d', 'e', 'f'};
+
+    private static final boolean useReflect = true;
+    private static final boolean useUnsafe = false;
 
     private static void testFinal1() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Field field = Test.class.getDeclaredField("value1");
 
-        boolean useReflect = false;
         if(useReflect){
             field.setAccessible(true);
 
@@ -62,7 +64,7 @@ public class Test {
             modifiers.setInt(field,field.getModifiers()&~Modifier.FINAL);
 
             field.set(null, new char[]{'1', '2', '3'});
-        }else{
+        }else if(useUnsafe){
             MyUnsafe.putObject(Test.class, MyUnsafe.staticFieldOffset(field), new char[]{'1', '2', '3'});
         }
 
@@ -72,11 +74,10 @@ public class Test {
     public void testFinal2() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Field field = Test.class.getDeclaredField("value2");
 
-        boolean useReflect = false;
         if(useReflect) {
             field.setAccessible(true);
             field.set(this, new char[]{'4', '5', '6'});
-        }else{
+        }else if(useUnsafe){
             MyUnsafe.putObject(this, MyUnsafe.objectFieldOffset(field), new char[]{'4', '5', '6'});
         }
 
