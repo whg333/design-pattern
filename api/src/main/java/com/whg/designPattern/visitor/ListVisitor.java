@@ -3,8 +3,7 @@ package com.whg.designPattern.visitor;
 import com.whg.designPattern.composite.Directory;
 import com.whg.designPattern.composite.Entry;
 import com.whg.designPattern.composite.File;
-
-import java.util.Iterator;
+import com.whg.designPattern.iterator.Iterator;
 
 public class ListVisitor implements Visitor{
 

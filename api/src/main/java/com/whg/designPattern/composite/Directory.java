@@ -1,12 +1,14 @@
 package com.whg.designPattern.composite;
 
+import com.whg.designPattern.iterator.Aggregate;
+import com.whg.designPattern.iterator.DirectoryIterator;
+import com.whg.designPattern.iterator.Iterator;
 import com.whg.designPattern.visitor.Visitor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class Directory extends Entry{
+public class Directory extends Entry implements Aggregate<Entry> {
 
     private final String name;
     private final List<Entry> entries;
@@ -43,8 +45,9 @@ public class Directory extends Entry{
         visitor.visitDirectory(this);
     }
 
+    @Override
     public Iterator<Entry> iterator(){
-        return entries.iterator();
+        return new DirectoryIterator(entries);
     }
 
 }

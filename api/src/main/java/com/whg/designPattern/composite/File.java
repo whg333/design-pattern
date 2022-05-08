@@ -7,6 +7,10 @@ public class File extends Entry{
     private final String name;
     private final int size;
 
+    public File(String name){
+        this(name, 10000);
+    }
+
     public File(String name, int size) {
         this.name = name;
         this.size = size;
