@@ -37,7 +37,12 @@ public class Directory extends Entry implements Aggregate<Entry> {
     @Override
     protected void printList(String prefix) {
         System.out.println(prefix + "/" + this);
-        entries.forEach(entry ->  entry.printList(prefix + "/" + name));
+
+        Iterator<Entry> it = iterator(); // 使用迭代器遍历
+        while (it.hasNext()){
+            Entry entry = it.next();
+            entry.printList(prefix + "/" + name);
+        }
     }
 
     @Override

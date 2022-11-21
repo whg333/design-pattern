@@ -20,7 +20,7 @@ public class ListVisitor implements Visitor{
 
         String saveDir = currentDir;
         currentDir = currentDir + "/" + directory.getName();
-        Iterator<Entry> it = directory.iterator();
+        Iterator<Entry> it = directory.iterator(); // 使用迭代器遍历
         while (it.hasNext()){
             Entry entry = it.next();
             entry.accept(this);
