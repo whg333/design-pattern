@@ -10,10 +10,6 @@ public class RandomCountDisplay extends CountDisplay{
         super(impl);
     }
     public void randomDisplay(int count){
-        open();
-        for(int i=0;i<Math.max(1, random.nextInt(count+1));i++){
-            print();
-        }
-        close();
+        multiDisplay(Math.max(1, random.nextInt(count+1)));
     }
 }
